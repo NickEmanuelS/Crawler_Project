@@ -47,7 +47,7 @@ public class Controller {
         // occurs. You'll probably want this set to true when you first start testing
         // your crawler, and then set to false once you're ready to let the crawler run
         // for a long time.
-//        config.setHaltOnError(true);
+//        config.setHaltOnError(true); sei não
 
         // Instantiate the controller for this crawl.
         PageFetcher pageFetcher = new PageFetcher(config);
