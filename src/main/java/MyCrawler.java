@@ -1,8 +1,5 @@
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
-
-import org.apache.http.Header;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -11,80 +8,51 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class MyCrawler extends WebCrawler {
 
-	private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
-
-    private final AtomicInteger numSeenImages;
+	private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg|png|mp3|mp4|zip|gz))$");
 
     /**
-     * Creates a new crawler instance.
-     *
-     * @param numSeenImages This is just an example to demonstrate how you can pass objects to crawlers. In this
-     * example, we pass an AtomicInteger to all crawlers and they increment it whenever they see a url which points
-     * to an image.
-     */
-    public MyCrawler(AtomicInteger numSeenImages) {
-        this.numSeenImages = numSeenImages;
-    }
-
-    /**
-     * You should implement this function to specify whether the given url
-     * should be crawled or not (based on your crawling logic).
+     * Specify whether the given url should be crawled or not based on
+     * the crawling logic. Here URLs with extensions css, js etc will not be visited
      */
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
-        String href = url.getURL().toLowerCase();
-        // Ignore the url if it has an extension that matches our defined set of image extensions.
-        if (IMAGE_EXTENSIONS.matcher(href).matches()) {
-            numSeenImages.incrementAndGet();
-            return false;
-        }
+        System.out.println("shouldVisit: " + url.getURL().toLowerCase());
 
-        // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
-        return href.startsWith("https://www.ics.uci.edu/");
+        String href = url.getURL().toLowerCase();
+        boolean result = !FILTERS.matcher(href).matches();
+
+        if(result)
+            System.out.println("URL Should Visit");
+        else
+            System.out.println("URL Should not Visit");
+
+        return result;
     }
 
+
     /**
-     * This function is called when a page is fetched and ready to be processed
-     * by your program.
+     * This function is called when a page is fetched and ready
+     * to be processed by the program.
      */
     @Override
     public void visit(Page page) {
-        int docid = page.getWebURL().getDocid();
         String url = page.getWebURL().getURL();
-        String domain = page.getWebURL().getDomain();
-        String path = page.getWebURL().getPath();
-        String subDomain = page.getWebURL().getSubDomain();
-        String parentUrl = page.getWebURL().getParentUrl();
-        String anchor = page.getWebURL().getAnchor();
-
-        logger.debug("Docid: {}", docid);
-        logger.info("URL: {}", url);
-        logger.debug("Domain: '{}'", domain);
-        logger.debug("Sub-domain: '{}'", subDomain);
-        logger.debug("Path: '{}'", path);
-        logger.debug("Parent page: {}", parentUrl);
-        logger.debug("Anchor text: {}", anchor);
+        System.out.println("URL: " + url);
 
         if (page.getParseData() instanceof HtmlParseData) {
-            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            String text = htmlParseData.getText();
-            String html = htmlParseData.getHtml();
+            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();      
+            String text = htmlParseData.getText(); //extract text from page
+            String html = htmlParseData.getHtml(); //extract html from page
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
 
-            logger.debug("Text length: {}", text.length());
-            logger.debug("Html length: {}", html.length());
-            logger.debug("Number of outgoing links: {}", links.size());
-        }
+            System.out.println("---------------------------------------------------------");
+            System.out.println("Page URL: " + url);
+            System.out.println("Text length: " + text.length());
+            System.out.println("Html length: " + html.length());
+            System.out.println("Number of outgoing links: " + links.size());
+            System.out.println("---------------------------------------------------------");
 
-        Header[] responseHeaders = page.getFetchResponseHeaders();
-        if (responseHeaders != null) {
-            logger.debug("Response headers:");
-            for (Header header : responseHeaders) {
-                logger.debug("\t{}: {}", header.getName(), header.getValue());
-            }
+            //if required write content to file
         }
-
-        logger.debug("=============");
     }
-
 }
