@@ -50,6 +50,7 @@ public class MyCrawler extends WebCrawler {
             System.out.println("Text length: " + text.length());
             System.out.println("Html length: " + html.length());
             System.out.println("Number of outgoing links: " + links.size());
+            System.out.println("HTML Content: " + html);
             System.out.println("---------------------------------------------------------");
 
             //if required write content to file

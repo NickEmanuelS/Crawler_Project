@@ -31,7 +31,8 @@ public class Controller {
         /*
          * Add seed URLs
          */
-        controller.addSeed("http://srilanka.travel-culture.com/sri-lanka-gov-links.shtml");
+//        controller.addSeed("http://srilanka.travel-culture.com/sri-lanka-gov-links.shtml");
+        controller.addSeed("https://www.york.ac.uk/teaching/cws/wws/webpage1.html");
 
         /*
          * Start the crawl.
